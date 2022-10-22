@@ -16,4 +16,5 @@ class TestErrors(TestCase):
         self.by_author.force_login(TestErrors.author)
 
     def test_Error404HasCustomTemplate(self):
-        self.assertTemplateUsed(self.by_author.get('non-existing-page'), 'core/404.html')
+        self.assertTemplateUsed(self.by_author.get('non-existing-page'),
+                                'core/404.html')
