@@ -27,7 +27,6 @@ class TestComment(TestCase):
         self.by_author.force_login(TestComment.author)
 
     def test_CommentAppearsAtPostPage(self):
-        self.assertEqual(TestComment.new_comment.text, 'Тестовый комментарий')
         response = self.by_author.get(f'/posts/{TestComment.new_post.id}/')
         self.assertTrue(TestComment.new_comment in
                         response.context.get('comments'))

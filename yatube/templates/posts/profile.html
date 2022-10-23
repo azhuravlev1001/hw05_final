@@ -5,40 +5,28 @@
         <div class="mb-5">       
           <h1>Все посты пользователя {{author.get_full_name}} </h1>
           <h3>Всего постов: {{author.posts.count}} </h3>   
-          {% if following %}
-          <a
-            class="btn btn-lg btn-light"
-            href="{% url 'posts:profile_unfollow' author.username %}" role="button"
-          >
-            Отписаться
-          </a>
-          {% else %}
+          {% if request.user.is_authenticated %}
+            {% if following %}
             <a
-              class="btn btn-lg btn-primary"
-              href="{% url 'posts:profile_follow' author.username %}" role="button"
+              class="btn btn-lg btn-light"
+              href="{% url 'posts:profile_unfollow' author.username %}" role="button"
             >
-              Подписаться
+              Отписаться
             </a>
+            {% else %}
+              <a
+                class="btn btn-lg btn-primary"
+                href="{% url 'posts:profile_follow' author.username %}" role="button"
+              >
+                Подписаться
+              </a>
+            {% endif %}
           {% endif %}
           {% for post in page_obj %}
             <article>    
               <ul>
-                <li>
-                  Дата публикации: {{ post.pub_date|date:"d E Y" }}
-                </li>
-              </ul>
-              {% include 'posts/includes/load_thumbnail.html' %}
-              <p>{{ post.text }}</p>
-              <a href="{% url 'posts:post_detail' post.id %}">
-                подробная информация 
-              </a>
-            </article>       
-            {% if post.group %}
-              <a href="{% url 'posts:posts' post.group.slug %}">
-                все записи группы
-              </a>
-            {% endif %}
-            {% if not forloop.last %}<hr>{% endif %}
+              {% include 'posts/includes/postcard.html' %}
+            </article> {% if not forloop.last %}<hr>{% endif %}
           {% endfor %}
           {% include 'posts/includes/paginator.html' %}
         </div>

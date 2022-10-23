@@ -118,35 +118,4 @@ class Follow(models.Model):
         unique_together = ('user', 'author')
 
     def __str__(self):
-        return self.user
-
-
-class Subscription(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscribed',
-        verbose_name='Подписанный',
-        help_text='Пользователь, подписанный на автора'
-    )
-
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='subscripring',
-        help_text='Пользователь, подписанный на автора'
-
-    )
-
-    post = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE,
-        related_name='subscriptions',
-        help_text='Пост автора, на которого подписан пользователь'
-    )
-
-    class Meta:
-        ordering = ['user']
-
-    def __str__(self):
-        return self.post.text[:STR_LENGTH]
+        return self.user.username

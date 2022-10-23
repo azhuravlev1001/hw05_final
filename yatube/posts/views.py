@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import PostForm, CommentForm
-from .models import Group, Post, User, Follow, Subscription
+from .models import Group, Post, User, Follow
 
 COUNT_OF_POSTS_ON_PAGE = 10
 
@@ -34,18 +34,16 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
-    post_author = get_object_or_404(User, username=username)
-    posts_of_author = Post.objects.filter(author=post_author)
+    author = get_object_or_404(User, username=username)
+    posts_of_author = Post.objects.filter(author=author)
     page_obj = get_paginator(request, posts_of_author)
-    following = False
-    if request.user.is_authenticated:
-        following = Follow.objects.filter(
-            user=request.user,
-            author=post_author
-        ).exists()
+    following = (
+        request.user.is_authenticated
+        and Follow.objects.filter(user=request.user, author=author).exists()
+    )
     context = {
         'page_obj': page_obj,
-        'author': post_author,
+        'author': author,
         'following': following,
     }
     return render(request, 'posts/profile.html', context)
@@ -111,14 +109,10 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
+    author_list = []
     for auth_obj in Follow.objects.filter(user=request.user):
-        for post_obj in Post.objects.filter(author=auth_obj.author):
-            Subscription.objects.get_or_create(
-                user=request.user,
-                author=auth_obj.author,
-                post=post_obj
-            )
-    selected_posts = Subscription.objects.all()
+        author_list.append(auth_obj.author)
+    selected_posts = Post.objects.filter(author__in=author_list)
     page_obj = get_paginator(request, selected_posts)
     context = {'page_obj': page_obj, }
     return render(request, 'posts/follow.html', context)
@@ -136,5 +130,4 @@ def profile_follow(request, username):
 def profile_unfollow(request, username):
     author = get_object_or_404(User, username=username)
     Follow.objects.filter(user=request.user, author=author).delete()
-    Subscription.objects.filter(user=request.user, author=author).delete()
     return redirect('posts:index')
