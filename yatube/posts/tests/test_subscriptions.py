@@ -41,7 +41,8 @@ class TestSubscription(TestCase):
             kwargs={'username': TestSubscription.author.username}
         ))
         self.assertFalse(Follow.objects.filter(
-            user=TestSubscription.unauthorised, author=TestSubscription.author).exists())
+            user=TestSubscription.unauthorised,
+            author=TestSubscription.author).exists())
 
     def test_AuthorUnfollowsOthers(self):
         self.by_non_author.post(reverse(
