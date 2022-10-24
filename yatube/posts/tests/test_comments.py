@@ -26,6 +26,15 @@ class TestComment(TestCase):
         self.by_author = Client()
         self.by_author.force_login(TestComment.author)
 
+    def test_Comment_Is_Created(self):
+        self.assertTrue(
+            Comment.objects.filter(
+                post=TestComment.new_post,
+                author=TestComment.author,
+                text='Тестовый комментарий'
+            ).exists()
+        )
+
     def test_CommentAppearsAtPostPage(self):
         response = self.by_author.get(f'/posts/{TestComment.new_post.id}/')
         self.assertTrue(TestComment.new_comment in

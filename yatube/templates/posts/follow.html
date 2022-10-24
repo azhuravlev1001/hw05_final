@@ -12,8 +12,6 @@
                 <a href="{% url 'posts:profile' post.author %}">
                     все посты пользователя
                 </a>
-                </li>
-                <li>
                 {% include 'posts/includes/postcard.html' %}
             </article>
             {% if not forloop.last %}<hr>{% endif %}

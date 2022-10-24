@@ -28,7 +28,7 @@ class TestSubscription(TestCase):
         self.by_author.force_login(TestSubscription.author)
 
     def test_AuthorFollowsOthers(self):
-        self.by_non_author.post(reverse(
+        self.by_non_author.get(reverse(
             'posts:profile_follow',
             kwargs={'username': TestSubscription.author.username}
         ))
@@ -36,16 +36,23 @@ class TestSubscription(TestCase):
             user=self.user, author=TestSubscription.author).exists())
 
     def test_UnauthorisedCannotFollow(self):
-        self.by_unauthorised.post(reverse(
+        response = self.by_unauthorised.get(reverse(
             'posts:profile_follow',
             kwargs={'username': TestSubscription.author.username}
         ))
         self.assertFalse(Follow.objects.filter(
             user=TestSubscription.unauthorised,
-            author=TestSubscription.author).exists())
+            author=TestSubscription.author).exists()
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response,
+            '/auth/login/?next=/profile/azhuravlev1001/follow/'
+        )
 
     def test_AuthorUnfollowsOthers(self):
-        self.by_non_author.post(reverse(
+        Follow.objects.create(user=self.user, author=TestSubscription.author)
+        self.by_non_author.get(reverse(
             'posts:profile_unfollow',
             kwargs={'username': TestSubscription.author.username}
         ))
@@ -53,12 +60,17 @@ class TestSubscription(TestCase):
 
     def test_UnauthorisedCannotUnfollow(self):
         Follow.objects.create(user=self.user, author=TestSubscription.author)
-        self.by_unauthorised.post(reverse(
+        response = self.by_unauthorised.get(reverse(
             'posts:profile_unfollow',
             kwargs={'username': TestSubscription.author.username}
         ))
         self.assertTrue(Follow.objects.filter(
             user=self.user, author=TestSubscription.author).exists())
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response,
+            '/auth/login/?next=/profile/azhuravlev1001/unfollow/'
+        )
 
     def test_FollowerSeesNewPost(self):
         Follow.objects.create(
@@ -79,4 +91,8 @@ class TestSubscription(TestCase):
 
     def test_UnauthorisedCannotOpenFollowList(self):
         response = self.by_unauthorised.get(reverse('posts:follow_index'))
-        self.assertFalse(response.status_code == 200)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(
+            response,
+            '/auth/login/?next=/follow/'
+        )
