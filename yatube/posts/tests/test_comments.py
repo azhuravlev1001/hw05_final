@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
+from django.urls import reverse
+
 
 from ..models import Post, Comment
 
@@ -27,11 +29,17 @@ class TestComment(TestCase):
         self.by_author.force_login(TestComment.author)
 
     def test_Comment_Is_Created(self):
+        self.by_author.post(
+            reverse('posts:add_comment',
+                    kwargs={'post_id': TestComment.new_post.id}),
+            data={'text': 'Тестовый текст комментария'},
+            follow=True
+        )
         self.assertTrue(
             Comment.objects.filter(
                 post=TestComment.new_post,
                 author=TestComment.author,
-                text='Тестовый комментарий'
+                text='Тестовый текст комментария'
             ).exists()
         )
 
