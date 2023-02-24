@@ -11,6 +11,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '[::1]',
     'testserver',
+    'www.azhuravlev1001.pythonanywhere.com',
+    'azhuravlev1001.pythonanywhere.com',
 ]
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'about.apps.AboutConfig',
     'sorl.thumbnail',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -37,6 +40,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'yatube.urls'
@@ -112,3 +116,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CACHES = {
     'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache', }
 }
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
