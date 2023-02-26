@@ -1,23 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}Последние обновления на сайте{% endblock %}
 {% block content %}
-<div class="container py-5">
-  {% include 'posts/includes/switcher.html' %}
-  {% load cache %}
-  {% cache 20 sidebar index_page %}
-    {% for post in page_obj %}
-    <article>
-      <ul>
-        <li>
-          Автор: {{ post.author.get_full_name }}
-          <a href="{% url 'posts:profile' post.author %}">
-            все посты пользователя
-          </a>
-        </li>
-      {% include 'posts/includes/postcard.html' %}
-    </article>      {% if not forloop.last %}<hr>{% endif %}
-    {% endfor %}
-  {% endcache %} 
-  {% include 'posts/includes/paginator.html' %}
-</div>
+  <div class="container py-5">
+    {% include 'posts/includes/switcher.html' %}
+    {% load cache %}
+      {% cache 1 sidebar index_page %}
+        {% for post in page_obj %}
+          <article>
+            <ul>
+              <li>
+                Автор: {{ post.author.get_full_name }}
+                <a href="{% url 'posts:profile' post.author %}">
+                  все посты пользователя
+                </a>
+              </li>
+              {% include 'posts/includes/postcard.html' %}
+            </ul>
+          </article>      {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+      {% endcache %} 
+    {% include 'posts/includes/paginator.html' %}
+  </div>
 {% endblock %}

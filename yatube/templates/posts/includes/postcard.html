@@ -4,12 +4,8 @@
 </ul>
 {% include 'posts/includes/load_thumbnail.html' %}
 <p>{{ post.text }}</p>
-<a href="{% url 'posts:post_detail' post.id %}">
-подробная информация
-</a>
+<a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
 </br>
 {% if post.group %}
-<a href="{% url 'posts:posts' post.group.slug %}">
-  все записи группы
-</a>
+  <a href="{% url 'posts:posts' post.group.slug %}">все записи группы</a>
 {% endif %}
